@@ -16,41 +16,41 @@ document.addEventListener('DOMContentLoaded', function() {
         const urls = urlList.value.split('\n').filter(url => url.trim() !== '');
         const plugins = Array.from(pluginList.getElementsByTagName('input')).map(input => input.value.trim()).filter(plugin => plugin !== '');
 
-        // Send request to Python backend
-        fetch('/check_plugins', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ urls, plugins }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            resultsTable.innerHTML = ''; // Clear previous results
-            data.forEach(result => {
+        resultsTable.innerHTML = ''; // Clear previous results
+
+        urls.forEach(url => {
+            fetch('/check_plugins', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url, plugins }),
+            })
+            .then(response => response.json())
+            .then(data => {
                 const row = resultsTable.insertRow();
                 const cell1 = row.insertCell(0);
                 const cell2 = row.insertCell(1);
-                cell1.textContent = result.url;
-                cell2.textContent = result.plugins.join(', ');
-            });
-        })
-        .catch(error => console.error('Error:', error));
+                cell1.textContent = url;
+                cell2.textContent = Object.keys(data).join(', ');
+            })
+            .catch(error => console.error('Error:', error));
+        });
     });
 
     downloadButton.addEventListener('click', function() {
-        fetch('/download_csv')
-        .then(response => response.blob())
-        .then(blob => {
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = 'plugin_results.csv';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => console.error('Error:', error));
+        const csvContent = "data:text/csv;charset=utf-8," 
+            + "URL,Plugins Used\n"
+            + Array.from(resultsTable.rows).map(row => 
+                row.cells[0].textContent + "," + row.cells[1].textContent
+            ).join("\n");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "plugin_results.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
 });
