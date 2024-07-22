@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Plugin Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Website Plugin Checker</h1>
+        
+        <div class="input-section">
+            <div class="url-list">
+                <h2>List of URLs to Check</h2>
+                <textarea id="urlList" rows="5" placeholder="Enter URLs, one per line"></textarea>
+            </div>
+            
+            <div class="plugin-list">
+                <h2>List of plugins to check for</h2>
+                <ul id="pluginList">
+                    <li>alpineIQ</li>
+                    <li>treez</li>
+                    <li>Google-analytics</li>
+                </ul>
+            </div>
+        </div>
+        
+        <button id="checkButton">Check Plugins</button>
+        
+        <div class="results-section">
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>Plugins Used</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Results will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <button id="downloadButton">Download File in Excel/csv</button>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
